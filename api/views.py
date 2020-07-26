@@ -1,16 +1,29 @@
-from rest_framework.mixins import (
-    CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
-)
-from rest_framework.viewsets import GenericViewSet
+from rest_framework import viewsets
+from rest_framework.viewsets import ModelViewSet
 from housefinder.models import Home
 from .serializers import HomeSerializer
 
 
-class HomeViewSet(GenericViewSet,  # generic view functionality
-                  CreateModelMixin,  # handles POSTs
-                  RetrieveModelMixin,  # handles GETs for 1 Company
-                  UpdateModelMixin,  # handles PUTs and PATCHes
-                  ListModelMixin):  # handles GETs for many Companies):
+class HomeViewSet(viewsets.ModelViewSet):
+    """
+       retrieve:
+           Return the given home.
+
+       list:
+           Return a list of all homes.
+
+       create:
+           Create a new home.
+
+       destroy:
+           Delete a home.
+
+       update:
+           Update a home.
+
+       partial_update:
+           Update a home.
+       """
 
     serializer_class = HomeSerializer
 

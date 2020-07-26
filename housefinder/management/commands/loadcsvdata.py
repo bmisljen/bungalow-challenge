@@ -7,83 +7,88 @@ from django.core.management.base import BaseCommand
 from housefinder.models import Home
 
 class Command(BaseCommand):
-    help = 'Ingests house data from a CSV file'
+    help = 'Loads a CSV file with home data'
 
-    # Takes dates formatted in MM/DD/YY to Django model friendly format of yyyy-mm-dd
-    def convert_date_format(self, input):
-        if not input == '':
-            output = datetime.datetime.strptime(input, '%m/%d/%Y').strftime('%Y-%m-%d')
-            return output
+    # Format date to Django Model format of: yyyy-mm-dd
+    def convertDate(self, dt):
+        if not dt == '':
+            new_date = datetime.datetime.strptime(dt, '%m/%d/%Y').strftime('%Y-%m-%d')
+            return new_date
 
-    # Converts price format of $150k or $1.2M to 150000 and 12000000
-    def convert_price_format(self, input):
-        if not input[0:1] == '$':
+    # Format the price to show the exact price without K or M
+    def convertPrice(self, price):
+        if not price[0:1] == '$':
             return None
-        number_portion = Decimal(input[1:len(input) - 1])
-        multiplier = input[len(input) - 1]
+
+        # Get the price and the multiplier
+        number = Decimal(price[1:len(price) - 1])
+        multiplier = price[len(price) - 1]
 
         if multiplier == 'K':
-            return number_portion * 1000
+            return number * 1000
         elif multiplier == 'M':
-            return number_portion * 1000000
+            return number * 1000000
 
     def add_arguments(self, parser):
-        parser.add_argument('--file', type=str)
+        parser.add_argument('path', type=str, help='The path to a .csv file containing homes')
 
-    def handle(self, *args, **options):
-        file_name = options['file']
-
+    def handle(self, *args, **kwargs):
+        file_name = kwargs['path']
         reader = csv.DictReader(open(file_name))
-        num_houses = 0
+        homes_saved = 0
+
         for row in reader:
-            house = Home()
-            house.area_unit = row['area_unit']
+            home = Home()
+
+            if row['area_unit']:
+                home.area_unit = row['area_unit']
             if row['bathrooms']:
-                house.bathrooms = row['bathrooms']
+                home.bathrooms = row['bathrooms']
             if row['bedrooms']:
-                house.bedrooms = row['bedrooms']
+                home.bedrooms = row['bedrooms']
             if row['home_size']:
-                house.home_size = row['home_size']
+                home.home_size = row['home_size']
             if row['home_type']:
-                house.home_type = row['home_type']
+                home.home_type = row['home_type']
             if row['last_sold_date']:
-                house.last_sold_date = self.convert_date_format(row['last_sold_date'])
+                home.last_sold_date = self.convertDate(row['last_sold_date'])
             if row['last_sold_price']:
-                house.last_sold_price = row['last_sold_price']
+                home.last_sold_price = row['last_sold_price']
             if row['link']:
-                house.link = row['link']
+                home.link = row['link']
             if row['price']:
-                house.price = self.convert_price_format(row['price'])
+                home.price = self.convertPrice(row['price'])
             if row['property_size']:
-                house.property_size = row['property_size']
+                home.property_size = row['property_size']
             if row['rent_price']:
-                house.rent_price = row['rent_price']
+                home.rent_price = row['rent_price']
             if row['rentzestimate_amount']:
-                house.rentzestimate_amount = row['rentzestimate_amount']
+                home.rentzestimate_amount = row['rentzestimate_amount']
             if row['rentzestimate_last_updated']:
-                house.rentzestimate_last_updated = self.convert_date_format(row['rentzestimate_last_updated'])
+                home.rentzestimate_last_updated = self.convertDate(row['rentzestimate_last_updated'])
             if row['tax_value']:
-                house.tax_value = row['tax_value']
+                home.tax_value = row['tax_value']
             if row['tax_year']:
-                house.tax_year = row['tax_year']
+                home.tax_year = row['tax_year']
             if row['year_built']:
-                house.year_built = row['year_built']
+                home.year_built = row['year_built']
             if row['zestimate_amount']:
-                house.zestimate_amount = row['zestimate_amount']
+                home.zestimate_amount = row['zestimate_amount']
             if row['zestimate_last_updated']:
-                house.zestimate_last_updated = self.convert_date_format(row['zestimate_last_updated'])
+                home.zestimate_last_updated = self.convertDate(row['zestimate_last_updated'])
             if row['zillow_id']:
-                house.zillow_id = row['zillow_id']
+                home.zillow_id = row['zillow_id']
             if row['address']:
-                house.address = row['address']
+                home.address = row['address']
             if row['city']:
-                house.city = row['city']
+                home.city = row['city']
             if row['state']:
-                house.state = row['state']
+                home.state = row['state']
             if row['zipcode']:
-                house.zipcode = row['zipcode']
+                home.zipcode = row['zipcode']
 
-            house.save()
-            num_houses += 1
+            home.save()
+            homes_saved += 1
 
-        self.stdout.write(self.style.SUCCESS('Successfully ingested {} Houses from: {}'.format(num_houses, file_name)))
+        print('Successfully saved: ', homes_saved, 'homes')
+

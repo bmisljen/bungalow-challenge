@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_swagger',
     'housefinder.apps.HousefinderConfig',
 ]
 
@@ -122,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Rest Framework (DRF)
+# Rest framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
