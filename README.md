@@ -22,9 +22,9 @@ While in the virtual environment used to run the project run the commend:
 Run the server: python manage.py runserver and go to http://127.0.0.1:8000/api/homes 
 
 Example Queries:
-    http://127.0.0.1:8000/api/homes/1796
-    http://127.0.0.1:8000/api/homes/?home_type=SingleFamily
-    http://127.0.0.1:8000/api/homes/?year_built=1955&bedrooms=6
+    http://127.0.0.1:8000/api/homes/1796 <br>
+    http://127.0.0.1:8000/api/homes/?home_type=SingleFamily <br>
+    http://127.0.0.1:8000/api/homes/?year_built=1955&bedrooms=6 <br>
     
 API Documentation: 
 
